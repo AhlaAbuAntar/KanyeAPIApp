@@ -2,25 +2,27 @@
 //Date: 23.11.2021
 using System.Net;
 using System.Web;
+using System.Text.Json;
 
 string URL = "https://api.kanye.rest/";
+using var client = new HttpClient();
 
 ConsoleKey choice;
 do
 {
-    Console.WriteLine(GetRequest(URL));
+    Console.WriteLine(await GetNewQuote(URL));
     Console.WriteLine("New quote? Press e");
     choice = Console.ReadKey().Key;
 } while (choice == ConsoleKey.E);
 
-string GetRequest(string url)
+async Task<string> GetNewQuote(string url)
 {
-    HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
-    string result = null;
-    using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
-    {
-        StreamReader reader = new StreamReader(resp.GetResponseStream());
-        result = reader.ReadToEnd();
-    }
-    return result;
+    var response = await client.GetAsync(url);
+    var kanyeResponseString = await response.Content.ReadAsStringAsync();
+    var kanyeResponseObject = JsonSerializer.Deserialize<KanyeApiModel>(kanyeResponseString);
+    return kanyeResponseObject.quote;
+}
+
+class KanyeApiModel {
+    public string quote { get; set; }
 }
