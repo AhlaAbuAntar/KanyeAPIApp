@@ -5,13 +5,13 @@ using System.Web;
 
 string URL = "https://api.kanye.rest/";
 
-string choice;
+ConsoleKey choice;
 do
 {
     Console.WriteLine(GetRequest(URL));
     Console.WriteLine("New quote? Press e");
-    choice = Console.ReadLine();
-} while (choice == "e");
+    choice = Console.ReadKey().Key;
+} while (choice == ConsoleKey.E);
 
 string GetRequest(string url)
 {
